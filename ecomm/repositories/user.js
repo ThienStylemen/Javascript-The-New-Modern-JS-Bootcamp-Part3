@@ -18,16 +18,7 @@ class UsersRepository{
     async getAll(){
         // Open the file called this.filename
         //readFile(path: string | Buffer | URL | promises.FileHandle, options?: { encoding?: null; flag?: string | number; }): Promise<Buffer>. A path to a file. If a URL is provided, it must use the file: protocol. If a FileHandle is provided, the underlying file will not be closed automatically. Asynchronously reads the entire contents of a file.
-        const contents = await fs.promises.readFile(this.filename, {encoding: 'utf8'});
-        
-        //read its content
-        console.log(contents);
-
-        //parse the contents
-        const data = JSON.parse(contents);
-
-        // return the parsed data 
-        return data;
+        return JSON.parse( await fs.promises.readFile(this.filename, {encoding: 'utf8'}));
     }
 }
 
