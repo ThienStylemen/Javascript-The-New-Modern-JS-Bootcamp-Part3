@@ -1,2 +1,3 @@
 npm install -y  // package
 npm install express nodemon
+npm run dev, 
