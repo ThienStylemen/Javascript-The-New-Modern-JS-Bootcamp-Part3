@@ -15,8 +15,23 @@ class UsersRepository{
             fs.writeFileSync(this.filename, '[]');
         }
     }
-    async checkFileExist(){
+    async getAll(){
+        // Open the file called this.filename
+        //readFile(path: string | Buffer | URL | promises.FileHandle, options?: { encoding?: null; flag?: string | number; }): Promise<Buffer>. A path to a file. If a URL is provided, it must use the file: protocol. If a FileHandle is provided, the underlying file will not be closed automatically. Asynchronously reads the entire contents of a file.
+        const contents = await fs.promises.readFile(this.filename, {encoding: 'utf8'});
+        
+        //read its content
+        console.log(contents);
+
+        //parse the contents
+
+        // return the parsed data 
     }
 }
 
-const repo = new UsersRepository('users.json');
+// Nodejs requires you to put async await code inside of a function marked as a sink, due to that, we put it into a test function
+const test = async ()=>{
+    const repo = new UsersRepository('users.json');
+    await repo.getAll();
+}
+test();
