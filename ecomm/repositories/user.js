@@ -24,14 +24,17 @@ class UsersRepository{
         console.log(contents);
 
         //parse the contents
+        const data = JSON.parse(contents);
 
         // return the parsed data 
+        return data;
     }
 }
 
 // Nodejs requires you to put async await code inside of a function marked as a sink, due to that, we put it into a test function
 const test = async ()=>{
     const repo = new UsersRepository('users.json');
-    await repo.getAll();
+    const users = await repo.getAll();
+    console.log(users);
 }
 test();
