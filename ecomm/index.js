@@ -1,5 +1,9 @@
 const express = require('express');
 const app = express();
+const bodyParser = require('body-parser');
+
+//(property) Application.use: ApplicationRequestHandler<Express>
+app.use(bodyParser.urlencoded({extended: true})); //  midlewares automatically instead of ... app.post('/products', bodyParser.urlencoded({extended: true})  .......
 
 //(property) Application.get: ((name: string) => any) & IRouterMatcher<Express, any>
 app.get('/', (req, res) => {
@@ -15,27 +19,9 @@ app.get('/', (req, res) => {
     `);
 });
 
-const bodyParser = (req, res, next) => {
-  if (req.method === 'POST') {
-    // get access to email, password, passwordConfirmation 
-    //(method) internal.Readable.on(event: "close", listener: () => void): Request<ParamsDictionary, any, any> (+5 overloads)
-    req.on('data', data => {   // .on ~= .addEventListener
-      const parsed = data.toString('utf8').split('&');
-      const formData = {};
-      for (let pair of parsed) {
-        const [key, value] = pair.split('=');  // destructure, first part before = is key, second part is value
-        formData[key] = value;
-      }
-      req.body= formData; //req.bodyy cung dc
-      next();
-    });
-  }else{
-    next();
-  }
-};
-
-// runc bodyParser, when the bodyParser function runed and call the next() callback function, take (req, res) an run arrow func
-app.post('/', bodyParser ,(req, res) => { // bodyPapers is midlewares
+//function bodyParser.urlencoded(options?: bodyParser.OptionsUrlencoded): createServer.NextHandleFunction
+//Returns middleware that only parses urlencoded bodies and only looks at requests where the Content-Type header matches the type option
+app.post('/', (req, res) => { 
   console.log(req.body); //req.bodyy cung dc
   //console.log(req); // here we checking the method is 'POST'
   res.send('Account created');
