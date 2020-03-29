@@ -42,13 +42,17 @@ class UsersRepository {
     randomId() {
         return crypto.randomBytes(4).toString('hex');   // we can think of a buffer as being like an array that has some data
     }
+    async getOne(id){
+        const records = await this.getAll();
+        //(predicate: (value: number, index: number, obj: Int8Array) => boolean, thisArg?: any): number. find calls predicate once for each element of the array, in ascending order, until it finds one where predicate returns true. If such an element is found, find immediately returns that element value. Otherwise, find returns undefined. Returns the value of the first element in the array where predicate is true, and undefined otherwise.
+        return records.find(record => record.id === id);
+    }
 }
 
 // Nodejs requires you to put async await code inside of a function marked as a sink, due to that, we put it into a test function
 const test = async () => {
     const repo = new UsersRepository('users.json');
-    await repo.create({ email: 'test@test.com', password: 'password' })
-    const users = await repo.getAll();
-    console.log(users);
+    const user = await repo.getOne('1');
+    console.log(user);
 }
 test();
