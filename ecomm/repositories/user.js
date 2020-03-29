@@ -80,12 +80,6 @@ class UsersRepository {
     }
 }
 
-// Nodejs requires you to put async await code inside of a function marked as a sink, due to that, we put it into a test function
-const test = async () => {
-    const repo = new UsersRepository('users.json');
-    const user1 = await repo.getOneBy({email: 'test@test.com'});
-    const user = await repo.getOneBy({email: 'test@test.com', password: '12'});//, 
-    console.log(user1);
-    console.log(user);
-}
-test();
+//We're going to instead Export an instance of the class
+module.exports = new UsersRepository('users.json');  // not module.exports = UsersRepository
+
