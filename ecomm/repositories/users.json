@@ -8,5 +8,10 @@
     "email": "test@test.com",
     "password": "password",
     "id": "a9acaa69"
+  },
+  {
+    "email": "asf@gamil.com",
+    "id": "a0ebce33",
+    "password": "mypass"
   }
 ]

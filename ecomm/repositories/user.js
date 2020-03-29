@@ -45,7 +45,7 @@ class UsersRepository {
     async getOne(id){
         const records = await this.getAll();
         //(predicate: (value: number, index: number, obj: Int8Array) => boolean, thisArg?: any): number. find calls predicate once for each element of the array, in ascending order, until it finds one where predicate returns true. If such an element is found, find immediately returns that element value. Otherwise, find returns undefined. Returns the value of the first element in the array where predicate is true, and undefined otherwise.
-        return records.find(record => record.id === id);
+        return records.find(record => record.id === id);    // or undefined 
     }
     async delete(id){
         const records = await this.getAll();
@@ -53,11 +53,26 @@ class UsersRepository {
         const filteredRecords = records.filter(record => record.id !== id);  // record for false elements
         await this.writeAll(filteredRecords); 
     }
+    async update(id, attrs){
+        const records = await this.getAll();
+        const record = records.find(record => record.id ===id);
+        if(!record){
+            throw new Error(`Record with id ${id} not found`);
+        }
+
+        //(method) ObjectConstructor.assign<T, U>(target: T, source: U): T & U (+3 overloads). Copy the values of all of the enumerable own properties from one or more source objects to a target object. Returns the target object.
+        // record ==={ email: 'test@gmail.com'}  // attrs ==={password:'123123'};
+        Object.assign(record,attrs);   // record ={email: 'test@gmail.com', password:'123123'}
+        this.writeAll(records);
+    }
 }
 
 // Nodejs requires you to put async await code inside of a function marked as a sink, due to that, we put it into a test function
 const test = async () => {
     const repo = new UsersRepository('users.json');
-    await repo.delete('67c32390');
+    //await repo.create({email: 'asf@gamil.com'});
+    await repo.update('a0ebce33', {password: 'mypass'});
+    await repo.update('123123', {password: 'mypass'});
+
 }
 test();
