@@ -1,4 +1,5 @@
 const fs = require('fs');//can be used to check to see if a file exists
+const crypto = require('crypto')
 
 class UsersRepository {
     constructor(filename) {// In Constructor functions in JavaScript are not allowed to be async in nature
@@ -19,10 +20,15 @@ class UsersRepository {
     async getAll() {
         // Open the file called this.filename
         //readFile(path: string | Buffer | URL | promises.FileHandle, options?: { encoding?: null; flag?: string | number; }): Promise<Buffer>. A path to a file. If a URL is provided, it must use the file: protocol. If a FileHandle is provided, the underlying file will not be closed automatically. Asynchronously reads the entire contents of a file.
-        return JSON.parse(await fs.promises.readFile(this.filename, { encoding: 'utf8' }));
+        return JSON.parse(
+            await fs.promises.readFile(this.filename, {
+                encoding: 'utf8'
+            })
+        );
     }
 
     async create(attrs) {
+        attrs.id = this.randomId();
         // {email: '...', password..}
         const records = await this.getAll();
         records.push(attrs);
@@ -32,6 +38,9 @@ class UsersRepository {
     async writeAll(records) {
         //stringify(value: any, replacer?: (this: any, key: string, value: any) => any, space?: string | number): string
         await fs.promises.writeFile(this.filename, JSON.stringify(records, null, 2)); //{encoding: 'utf8'} default
+    }
+    randomId() {
+        return crypto.randomBytes(4).toString('hex');   // we can think of a buffer as being like an array that has some data
     }
 }
 
