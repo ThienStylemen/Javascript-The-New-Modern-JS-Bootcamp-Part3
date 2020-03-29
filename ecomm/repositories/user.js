@@ -15,16 +15,28 @@ class UsersRepository{
             fs.writeFileSync(this.filename, '[]');
         }
     }
+    
     async getAll(){
         // Open the file called this.filename
         //readFile(path: string | Buffer | URL | promises.FileHandle, options?: { encoding?: null; flag?: string | number; }): Promise<Buffer>. A path to a file. If a URL is provided, it must use the file: protocol. If a FileHandle is provided, the underlying file will not be closed automatically. Asynchronously reads the entire contents of a file.
         return JSON.parse( await fs.promises.readFile(this.filename, {encoding: 'utf8'}));
+    }
+
+    async create(attrs){
+        // {email: '...', password..}
+        const records = await this.getAll();
+        records.push(attrs);
+        // write the updated 'records' array back to this.filename
+
+        await fs.promises.writeFile(this.filename, JSON.stringify(records)); //{encoding: 'utf8'} default
+
     }
 }
 
 // Nodejs requires you to put async await code inside of a function marked as a sink, due to that, we put it into a test function
 const test = async ()=>{
     const repo = new UsersRepository('users.json');
+    await repo.create({email: 'test@test.com', password: 'password'})
     const users = await repo.getAll();
     console.log(users);
 }
