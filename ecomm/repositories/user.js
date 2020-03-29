@@ -33,7 +33,8 @@ class UsersRepository {
         const records = await this.getAll();
         records.push(attrs);
         // write the updated 'records' array back to this.filename
-        this.writeAll(records);
+        await this.writeAll(records);
+        return attrs;
     }
     async writeAll(records) {
         //stringify(value: any, replacer?: (this: any, key: string, value: any) => any, space?: string | number): string
