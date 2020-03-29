@@ -47,12 +47,17 @@ class UsersRepository {
         //(predicate: (value: number, index: number, obj: Int8Array) => boolean, thisArg?: any): number. find calls predicate once for each element of the array, in ascending order, until it finds one where predicate returns true. If such an element is found, find immediately returns that element value. Otherwise, find returns undefined. Returns the value of the first element in the array where predicate is true, and undefined otherwise.
         return records.find(record => record.id === id);
     }
+    async delete(id){
+        const records = await this.getAll();
+        //Filter nhận các đối số giống như map và hoạt động rất giống nhau . Sự khác biệt duy nhất là callback cần trả về true hoặc false , nếu nó là true mảng không thay đổi nếu là false phần tử đó sẽ được lọc ra khỏi mảng ban đầu .
+        const filteredRecords = records.filter(record => record.id !== id);  // record for false elements
+        await this.writeAll(filteredRecords); 
+    }
 }
 
 // Nodejs requires you to put async await code inside of a function marked as a sink, due to that, we put it into a test function
 const test = async () => {
     const repo = new UsersRepository('users.json');
-    const user = await repo.getOne('1');
-    console.log(user);
+    await repo.delete('67c32390');
 }
 test();
