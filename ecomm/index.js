@@ -53,10 +53,19 @@ app.get('/signin', (req,res)=>{
           <input name="email" placeholder="email" />
           <input name="password" placeholder="password" />
           <button>Sign In</button>
-        </form>
+        </form> 
       </div>
     `);
 });
+app.post('/signin', async (req,res)=>{
+  const {email, password} = req.body;
+  const user = await usersRepo.getOneBy({email});
+  if (!user) return res.send('email not found');
+  if (user.password !== password) return res.send('invalid password');
+  req.session.userId = user.id;
+  res.send('your are signed in');
+});
+
 
 //method) Application.listen(port: number, hostname: string, backlog: number, callback?: (...args: any[]) => void): Server (+5 overloads)
 app.listen(3000, () => {
