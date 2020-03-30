@@ -47,6 +47,13 @@ class UsersRepository {
     await this.writeAll(records);    // write the updated 'records' array back to this.filenam
     return attrs;
   }
+
+  async comeparePasswords(saved, supplied){ // saved: in our database hased.salt
+    const [hashed, salt]  = saved.split('.'); //const hased =result[0]; const salt = result[1];
+    const hashedSupplied = await script(supplied, salt, 64);
+    return hashed === hashedSupplied;
+  }
+
   async writeAll(records) {
     //stringify(value: any, replacer?: (this: any, key: string, value: any) => any, space?: string | number): string
     await fs.promises.writeFile(this.filename, JSON.stringify(records, null, 2)); //{encoding: 'utf8'} default
