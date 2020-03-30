@@ -50,8 +50,8 @@ class UsersRepository {
 
   async comeparePasswords(saved, supplied){ // saved: in our database hased.salt
     const [hashed, salt]  = saved.split('.'); //const hased =result[0]; const salt = result[1];
-    const hashedSupplied = await script(supplied, salt, 64);
-    return hashed === hashedSupplied;
+    const hashedSuppliedBuf = await script(supplied, salt, 64);  // script return a Buffer
+    return hashed === hashedSuppliedBuf.toString('hex');
   }
 
   async writeAll(records) {

@@ -58,10 +58,12 @@ app.get('/signin', (req,res)=>{
     `);
 });
 app.post('/signin', async (req,res)=>{
-  const {email, password} = req.body;
+  const {email, password} = req.body; // infomation when we click enter html
   const user = await usersRepo.getOneBy({email});
   if (!user) return res.send('email not found');
-  if (user.password !== password) return res.send('invalid password');
+  const validPassword = await usersRepo.comeparePasswords(user.password, password);// return true false 
+  if (!validPassword) return res.send('invalid password');
+
   req.session.userId = user.id;
   res.send('your are signed in');
 });
