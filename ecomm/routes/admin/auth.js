@@ -3,15 +3,17 @@ const express =require('express');
 const router = express.Router();    // create router
 const signupTemplate = require('../../views/admin/auth/signup');
 const signinTemplate = require('../../views/admin/auth/signin');
+const {check} = require('express-validator');// const expressValidator = require()... then  expressValidator.check() may be annoyer
 
 //(property) Application.get: ((name: string) => any) & IRouterMatcher<Express, any>
 router.get('/signup', (req, res) => {
     res.send( signupTemplate({req})); // req: req
 });
 
-//function bodyParser.urlencoded(options?: bodyParser.OptionsUrlencoded): createServer.NextHandleFunction
-//Returns middleware that only parses urlencoded bodies and only looks at requests where the Content-Type header matches the type option
-router.post('/signup', async (req, res) => {
+router.post(
+    '/signup',
+    [check('email').isEmail(), check('password'), check('passwordConfirmation')],
+    async (req, res) => {
     // console.log(req.body); //req.bodyy cung dc
     const { email, password, passwordConfirmation } = req.body;
     const existingUser = await usersRepo.getOneBy({ email });
