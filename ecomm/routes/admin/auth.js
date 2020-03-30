@@ -2,7 +2,7 @@ const usersRepo = require('../../repositories/user');
 const express =require('express');
 const router = express.Router();    // create router
 const signupTemplate = require('../../views/admin/auth/signup');
-const signipTemplate = require('../../views/admin/auth/signin');
+const signinTemplate = require('../../views/admin/auth/signin');
 
 //(property) Application.get: ((name: string) => any) & IRouterMatcher<Express, any>
 router.get('/signup', (req, res) => {
@@ -34,7 +34,7 @@ router.get('/signout', (req, res) => {
 });
 
 router.get('/signin', (req, res) => {
-    res.send(signipTemplate());
+    res.send(signinTemplate());
 });
 router.post('/signin', async (req, res) => {
     const { email, password } = req.body; // infomation when we click enter html
