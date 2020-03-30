@@ -1,20 +1,12 @@
 const usersRepo = require('../../repositories/user');
 const express =require('express');
 const router = express.Router();    // create router
+const signupTemplate = require('../../views/admin/auth/signup');
+const signipTemplate = require('../../views/admin/auth/signin');
 
 //(property) Application.get: ((name: string) => any) & IRouterMatcher<Express, any>
 router.get('/signup', (req, res) => {
-    res.send(`
-        <div>
-          YOUR ID is: ${req.session.userId}
-          <form method="POST">
-            <input name="email" placeholder="email" />
-            <input name="password" placeholder="password" />
-            <input name="passwordConfirmation" placeholder="password confirmation" />
-            <button>Sign Up</button>
-          </form>
-        </div>
-      `);
+    res.send( signupTemplate({req})); // req: req
 });
 
 //function bodyParser.urlencoded(options?: bodyParser.OptionsUrlencoded): createServer.NextHandleFunction
@@ -42,15 +34,7 @@ router.get('/signout', (req, res) => {
 });
 
 router.get('/signin', (req, res) => {
-    res.send(`
-        <div>
-          <form method="POST">
-            <input name="email" placeholder="email" />
-            <input name="password" placeholder="password" />
-            <button>Sign In</button>
-          </form> 
-        </div>
-      `);
+    res.send(signipTemplate());
 });
 router.post('/signin', async (req, res) => {
     const { email, password } = req.body; // infomation when we click enter html
