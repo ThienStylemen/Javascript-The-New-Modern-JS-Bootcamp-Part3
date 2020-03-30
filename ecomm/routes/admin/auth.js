@@ -4,7 +4,7 @@ const router = express.Router();    // create router
 const signupTemplate = require('../../views/admin/auth/signup');
 const signinTemplate = require('../../views/admin/auth/signin');
 const {check, validationResult} = require('express-validator');// const expressValidator = require()... then  expressValidator.check() may be annoyer
-
+const {requireEmail, requirePassword, requirePasswordConfirmation} = require('./validators');
 //(property) Application.get: ((name: string) => any) & IRouterMatcher<Express, any>
 router.get('/signup', (req, res) => {
     res.send( signupTemplate({req})); // req: req
@@ -12,20 +12,10 @@ router.get('/signup', (req, res) => {
 
 router.post(
     '/signup',
-    [
-        check('email').trim().normalizeEmail().isEmail().withMessage('Must be a valid email') //validator.js
-        .custom( async (email)=>{   // value(email) of user input
-            const existingUser = await usersRepo.getOneBy({ email });
-            if (existingUser) //return res.send('Email in use');
-                throw new Error('Email in use');
-        })
-        , 
-        check('password').trim().isLength({min:4, max: 20}).withMessage('Must be between 4 and 20 characters'), 
-        check('passwordConfirmation').trim().isLength({min:4, max: 20}).withMessage('Must be between 4 and 20 characters')
-        .custom( (passwordConfirmation, {req})=>{ // const req = obj.req
-            if (passwordConfirmation !== req.body.password)
-                throw new Error('Password must match');
-        }) 
+    [   
+        requireEmail,    // first element of the array, a property of an object in validators.js
+        requirePassword,
+        requirePasswordConfirmation
     ],
     async (req, res) => { //validationResult catch error of chech() func
         const errors = validationResult(req);   //validationResult(req: Request): Result<ValidationError>, 
