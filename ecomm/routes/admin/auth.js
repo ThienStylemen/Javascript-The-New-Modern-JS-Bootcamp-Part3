@@ -19,7 +19,9 @@ router.post(
     ],
     async (req, res) => { //validationResult catch error of chech() func
         const errors = validationResult(req);   //validationResult(req: Request): Result<ValidationError>, 
-        console.log(errors);
+        if(!errors.isEmpty()){
+            return res.send( signupTemplate({req, errors})); // req: req
+        }
         // console.log(req.body); //req.bodyy cung dc
         const { email, password, passwordConfirmation } = req.body;
         
