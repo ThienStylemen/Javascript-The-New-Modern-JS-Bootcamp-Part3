@@ -3,9 +3,11 @@ const express = require('express');
 const router = express.Router();    // create router
 const signupTemplate = require('../../views/admin/auth/signup');
 const signinTemplate = require('../../views/admin/auth/signin');
-const { check, validationResult } = require('express-validator');// const expressValidator = require()... then  expressValidator.check() may be annoyer
 const { requireEmail, requirePassword, requirePasswordConfirmation,
         requireEmailExists,requireValidPasswordForUser} = require('./validators');
+const {handleErrors} = require('./middlewares');
+
+
 //(property) Application.get: ((name: string) => any) & IRouterMatcher<Express, any>
 router.get('/signup', (req, res) => {
     res.send(signupTemplate({ req })); // req: req to display req.userId
@@ -18,13 +20,10 @@ router.post(
         requirePassword,
         requirePasswordConfirmation
     ],
+    handleErrors(signupTemplate),
     async (req, res) => { //validationResult catch error of chech() func
-        const errors = validationResult(req);   //validationResult(req: Request): Result<ValidationError>, 
-        if (!errors.isEmpty()) {
-            return res.send(signupTemplate({ req, errors })); // req: req
-        }
-        // console.log(req.body); //req.bodyy cung dc
-        const { email, password, passwordConfirmation } = req.body;
+        
+        const { email, password } = req.body;
 
         // create a user in our user repo to represent this person
         const user = await usersRepo.create({ email, password }); //{email: email, password: password}, we also got the id
@@ -51,11 +50,8 @@ router.post(
         requireEmailExists,
         requireValidPasswordForUser
     ],
+    handleErrors(signinTemplate),
     async (req, res) => {
-        const errors = validationResult(req);   // array of error of check() func
-        if(!errors.isEmpty()){
-            return res.send(signinTemplate({errors}));  //set back the same form, show error
-        }
         const { email } = req.body; // infomation when we click enter html
         const user = await usersRepo.getOneBy({ email });
         
