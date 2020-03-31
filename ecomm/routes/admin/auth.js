@@ -54,7 +54,7 @@ router.post(
     async (req, res) => {
         const errors = validationResult(req);   // array of error of check() func
         if(!errors.isEmpty()){
-            return res.send(signinTemplate({errors}));
+            return res.send(signinTemplate({errors}));  //set back the same form, show error
         }
         const { email } = req.body; // infomation when we click enter html
         const user = await usersRepo.getOneBy({ email });
