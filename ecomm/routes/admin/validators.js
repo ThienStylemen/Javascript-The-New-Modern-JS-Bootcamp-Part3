@@ -2,8 +2,8 @@ const { check } = require('express-validator');   // alse need usersRepo
 const usersRepo = require('../../repositories/user');
 
 module.exports = {  // exports an object
-    requireTitle: check('title').trim().isLength({min:5, max: 40}),
-    requirePrice: check('price').trim().toFloat().isFloat({min: 1}),
+    requireTitle: check('title').trim().isLength({min:5, max: 40}).withMessage('Must be between 5 and 40 characters'),
+    requirePrice: check('price').trim().toFloat().isFloat({min: 1}).withMessage('Must be a number greater than 1'),
     requireEmail: check('email').trim().normalizeEmail().isEmail().withMessage('Must be a valid email') //validator.js
         .custom(async (email) => {   // value(email) of user input
             const existingUser = await usersRepo.getOneBy({ email });
