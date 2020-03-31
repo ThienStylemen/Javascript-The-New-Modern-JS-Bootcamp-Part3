@@ -4,7 +4,8 @@ const router = express.Router();    // create router
 const signupTemplate = require('../../views/admin/auth/signup');
 const signinTemplate = require('../../views/admin/auth/signin');
 const { check, validationResult } = require('express-validator');// const expressValidator = require()... then  expressValidator.check() may be annoyer
-const { requireEmail, requirePassword, requirePasswordConfirmation } = require('./validators');
+const { requireEmail, requirePassword, requirePasswordConfirmation,
+        requireEmailExists,requireValidPasswordForUser} = require('./validators');
 //(property) Application.get: ((name: string) => any) & IRouterMatcher<Express, any>
 router.get('/signup', (req, res) => {
     res.send(signupTemplate({ req })); // req: req
@@ -38,7 +39,7 @@ router.post(
 router.get('/signout', (req, res) => {
     //(property) CookieSessionInterfaces.CookieSessionRequest.session?: CookieSessionInterfaces.CookieSessionObject. Represents the session for the given request.
     req.session = null; //user makes request you sign out the response we sent back is going to have a set cookie property inside of it
-    res.send('your are logged out')
+    res.send('your are logged out');
 });
 
 router.get('/signin', (req, res) => {
@@ -47,32 +48,18 @@ router.get('/signin', (req, res) => {
 router.post(
     '/signin',
     [
-        check('email').trim().normalizeEmail().isEmail().withMessage('Must provide a valid email')
-            .custom(async (email) => {
-                const user = await usersRepo.getOneBy({ email });
-                if (!user) {
-                    throw new Error('Email not found!!');
-                }
-            })
-        ,
-        check('password').trim()
+        requireEmailExists,
+        requireValidPasswordForUser
     ],
     async (req, res) => {
-
-        const errors = validationResult(req);
+        const errors = validationResult(req);   // array of error of check() func
         console.log(errors);
-        // if(!errors.isEmpty()){
-
-        // }
-
-        const { email, password } = req.body; // infomation when we click enter html
+        const { email } = req.body; // infomation when we click enter html
         const user = await usersRepo.getOneBy({ email });
-        if (!user) return res.send('email not found');
-        const validPassword = await usersRepo.comeparePasswords(user.password, password);// return true false 
-        if (!validPassword) return res.send('invalid password');
-
+        
         req.session.userId = user.id;
         res.send('your are signed in');
     });
 
 module.exports = router;
+

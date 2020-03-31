@@ -48,8 +48,9 @@ class UsersRepository {
     return attrs;
   }
 
-  async comeparePasswords(saved, supplied){ // saved: in our database hased.salt
-    const [hashed, salt]  = saved.split('.'); //const hased =result[0]; const salt = result[1];
+  
+  async comparePasswords(saved, supplied){ // saved: in our database hased.salt
+    const [hashed, salt] = saved.split('.'); //const hased =result[0]; const salt = result[1];
     const hashedSuppliedBuf = await script(supplied, salt, 64);  // script return a Buffer
     return hashed === hashedSuppliedBuf.toString('hex');
   }
