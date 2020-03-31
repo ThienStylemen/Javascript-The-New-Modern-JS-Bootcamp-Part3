@@ -1,7 +1,7 @@
 const fs = require('fs');//can be used to check to see if a file exists
 const crypto = require('crypto');
 
-module.exports = class Repository {
+module.exports = class Repository { // based class
     constructor(filename) {// In Constructor functions in JavaScript are not allowed to be async in nature
         if (!filename) {
             throw new Error('Creating a repository requires a filename');
