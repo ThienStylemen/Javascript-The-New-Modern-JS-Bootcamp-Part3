@@ -8,7 +8,7 @@ const { requireEmail, requirePassword, requirePasswordConfirmation,
         requireEmailExists,requireValidPasswordForUser} = require('./validators');
 //(property) Application.get: ((name: string) => any) & IRouterMatcher<Express, any>
 router.get('/signup', (req, res) => {
-    res.send(signupTemplate({ req })); // req: req
+    res.send(signupTemplate({ req })); // req: req to display req.userId
 });
 
 router.post(
@@ -43,7 +43,7 @@ router.get('/signout', (req, res) => {
 });
 
 router.get('/signin', (req, res) => {
-    res.send(signinTemplate());
+    res.send(signinTemplate({}));   // empty object
 });
 router.post(
     '/signin',
@@ -53,7 +53,9 @@ router.post(
     ],
     async (req, res) => {
         const errors = validationResult(req);   // array of error of check() func
-        console.log(errors);
+        if(!errors.isEmpty()){
+            return res.send(signinTemplate({errors}));
+        }
         const { email } = req.body; // infomation when we click enter html
         const user = await usersRepo.getOneBy({ email });
         
