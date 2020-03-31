@@ -23,9 +23,12 @@ router.post(
         requirePrice 
     ],
     upload.single('image'), //in htlm : name="image"
-    (req, res) => { 
+    async (req, res) => { 
         const errors = validationResult(req);
-        console.log(req.file);
+        const image = req.file.buffer.toString('base64');// base64 can safely represent an image in the a string format
+        const {title, price} = req.body;
+        await ProductsRepo.create({title, price, image});
+        
         res.send('SUBMITTED');
     }
 );
