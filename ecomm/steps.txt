@@ -3,3 +3,4 @@ npm install express nodemon
 npm run dev, 
 npm install cookie-session
 npm install express-validator
+npm install multer
