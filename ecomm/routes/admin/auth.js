@@ -16,24 +16,23 @@ router.get('/signup', (req, res) => {
 router.post(
     '/signup',
     [
-        requireEmail,    // first element of the array, a property of an object in validators.js
+        requireEmail,    
         requirePassword,
         requirePasswordConfirmation
     ],
     handleErrors(signupTemplate),
     async (req, res) => { //validationResult catch error of chech() func
-        
+        console.log('asdfasdf')
         const { email, password } = req.body;
-
         // create a user in our user repo to represent this person
         const user = await usersRepo.create({ email, password }); //{email: email, password: password}, we also got the id
-
         // store the id inside the user cookie, now we use third pakage
         req.session.userId = user.id // added by cookie session req.session === {}
 
-        res.send('Account created');
+        res.redirect('/admin/products');
     }
 );
+
 
 router.get('/signout', (req, res) => {
     //(property) CookieSessionInterfaces.CookieSessionRequest.session?: CookieSessionInterfaces.CookieSessionObject. Represents the session for the given request.
@@ -42,6 +41,7 @@ router.get('/signout', (req, res) => {
 });
 
 router.get('/signin', (req, res) => {
+    res.session =null;
     res.send(signinTemplate({}));   // empty object
 });
 router.post(
@@ -56,8 +56,7 @@ router.post(
         const user = await usersRepo.getOneBy({ email });
         
         req.session.userId = user.id;
-        res.send('your are signed in');
+        res.redirect('/admin/products');
     });
 
 module.exports = router;
-
