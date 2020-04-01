@@ -1,16 +1,20 @@
 const express = require('express');
 const multer = require('multer');
 
-const {handleErrors} = require('./middlewares');
+const {handleErrors} = require('./middlewares');    // helper func
 
 const ProductsRepo = require('../../repositories/products');
 const productsNewTemplate = require('../../views/admin/products/new');
+const productsIndexTemplate = require('../../views/admin/products/index');// func: module.exports = ({products})=>{}
 const { requireTitle, requirePrice } = require('./validators');
 
 const router = express.Router();
 const upload = multer({storage: multer.memoryStorage()});//multer(options?: multer.Options): Multer. Returns a Multer instance that provides several methods for generating middleware that process files uploaded in multipart/form-data format.
 
-router.get('/admin/products', (req, res) => { });
+router.get('/admin/products', async (req, res) => { 
+    const products = await ProductsRepo.getAll();
+    res.send(productsIndexTemplate({products}));
+});
 
 router.get('/admin/products/new', (req, res) => {  //.get is to send a form
     res.send(productsNewTemplate({}));
