@@ -3,17 +3,17 @@ const multer = require('multer');
 
 const {handleErrors, requireAuth} = require('./middlewares');    // helper func
 
-const ProductsRepo = require('../../repositories/products');
+const productsRepo = require('../../repositories/products');
 const productsNewTemplate = require('../../views/admin/products/new');
 const productsIndexTemplate = require('../../views/admin/products/index');// func: module.exports = ({products})=>{}
-productsEditTemplate = require('../../views/admin/products/edit');
+const productsEditTemplate = require('../../views/admin/products/edit');
 const { requireTitle, requirePrice } = require('./validators');
 
 const router = express.Router();
 const upload = multer({storage: multer.memoryStorage()});//multer(options?: multer.Options): Multer. Returns a Multer instance that provides several methods for generating middleware that process files uploaded in multipart/form-data format.
 
 router.get('/admin/products',requireAuth,async (req, res) => { 
-    const products = await ProductsRepo.getAll();
+    const products = await productsRepo.getAll();
     res.send(productsIndexTemplate({products}));
 });
 
@@ -33,25 +33,71 @@ router.post(
         
         const image = req.file.buffer.toString('base64');// base64 can safely represent an image in the a string format
         const {title, price} = req.body;//upload.single('image')
-        await ProductsRepo.create({title, price, image});
+        await productsRepo.create({title, price, image});
         
         res.redirect('/admin/products');
     }
 );
 
-router.get('/admin/products/:id/edit', async (req,res)=>{   // req.params.id
+router.get('/admin/products/:id/edit', requireAuth ,async (req,res)=>{   // req.params.id
     //console.log(req.params.id);
-    const product = await ProductsRepo.getOne(req.params.id);
-    if(!product)
-        return res.send('product not found');
+    const product = await productsRepo.getOne(req.params.id);
+    if(!product) return res.send('product not found');
     res.send(productsEditTemplate({product}));
 })
 
-router.post(
-    '/admin/products/id/edit', 
-    requireAuth , 
-    async(req,res)=>{
+router.post('/admin/products/:id/edit', 
+    requireAuth, 
+    upload.single('image'),  // file name is image (in html)
+    [requireTitle, requirePrice],
+    handleErrors(productsEditTemplate),
+    async(req,  res)=>{
+        const changes = req.body;   // save what changes
+        if(req.file){     // if file was provided, //if received an image
+            changes.image = req.file.buffer.toString('base64');
+        }
+        try{
+            await productsRepo.update(req.params.id, changes);  //update func might throw errors
+        }catch(err){
+            return res.send('Could not find item');
+        }
 
-});
+        res.redirect('/admin/products');
+    }
+);
+
+// router.get('/admin/products/:id/edit', requireAuth, async (req, res) => {
+//     const product = await productsRepo.getOne(req.params.id);
+  
+//     if (!product) {
+//       return res.send('Product not found');
+//     }
+  
+//     res.send(productsEditTemplate({ product }));
+//   });
+  
+//   router.post(
+//     '/admin/products/:id/edit',
+//     requireAuth,
+//     upload.single('image'),
+//     [requireTitle, requirePrice],
+//     handleErrors(productsEditTemplate),
+//     async (req, res) => {
+//       const changes = req.body;
+  
+//       if (req.file) {
+//         changes.image = req.file.buffer.toString('base64');
+//       }
+  
+//       try {
+//         await productsRepo.update(req.params.id, changes);
+//       } catch (err) {
+//         return res.send('Could not find item');
+//       }
+  
+//       res.redirect('/admin/products');
+//     }
+//   );
+  
 
 module.exports = router;
