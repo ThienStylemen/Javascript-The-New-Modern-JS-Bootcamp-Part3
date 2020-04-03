@@ -1,11 +1,16 @@
 const { validationResult } = require('express-validator');// const expressValidator = require()... then  expressValidator.check() may be annoyer
 module.exports = {
-
-    handleErrors(templateFunc){//thien: templateFunc will be runed at some point in this function, not immediately
-        return (req,res, next)=>{
+    handleErrors(templateFunc, dataCb){//thien: templateFunc will be runed at some point in this function, not immediately, dataCb: dataCallback
+        return async (req,res, next)=>{
             const errors = validationResult(req);   // array of error of check() func
+
             if(!errors.isEmpty()){
-                return res.send(templateFunc({errors}));  //set back the same form, show error
+                let data = {};
+                if(dataCb){ //neu co loi va ham dc truyen dataCb ( dataCb exist)
+                    data = await dataCb(req); //chay callback do, trong file products.js, data = return {product} 
+                }
+                return res.send(templateFunc({errors, ...data}));  //set back the same form, show error, merge data to object
+                // if we have errors, already merged with products
             }
             next();
         }
