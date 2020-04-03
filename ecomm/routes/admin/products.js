@@ -12,11 +12,13 @@ const { requireTitle, requirePrice } = require('./validators');
 const router = express.Router();
 const upload = multer({storage: multer.memoryStorage()});//multer(options?: multer.Options): Multer. Returns a Multer instance that provides several methods for generating middleware that process files uploaded in multipart/form-data format.
 
+//set up
 router.get('/admin/products',requireAuth,async (req, res) => { 
     const products = await productsRepo.getAll();
     res.send(productsIndexTemplate({products}));
 });
 
+//for new
 router.get('/admin/products/new',requireAuth ,(req, res) => {  //.get is to send a form
    
     res.send(productsNewTemplate({}));
@@ -39,6 +41,7 @@ router.post(
     }
 );
 
+//for edit
 router.get('/admin/products/:id/edit', requireAuth ,async (req,res)=>{   // req.params.id
     //console.log(req.params.id);
     const product = await productsRepo.getOne(req.params.id);
@@ -68,5 +71,11 @@ router.post('/admin/products/:id/edit',
         res.redirect('/admin/products');
     }
 );
+
+// for delete, requireAuth(req,res,next)
+router.post('/admin/products/:id/delete', requireAuth, async (req,res)=>{
+    await productsRepo.delete(req.params.id); 
+    res.redirect('/admin/products');
+});
 
 module.exports = router;
