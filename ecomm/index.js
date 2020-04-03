@@ -4,6 +4,7 @@ const cookieSession = require('cookie-session');
 const authRouter = require('./routes/admin/auth');
 const adminProductsRouter = require('./routes/admin/products');
 const productsRouter = require('./routes/products');
+const cartsRouter = require('./routes/carts');
 const app = express();
 
 //(property) Application.use: ApplicationRequestHandler<Express>
@@ -14,6 +15,7 @@ app.use(cookieSession({keys: ['asdadasd']})); //exactly one property, random cha
 app.use(authRouter);
 app.use(adminProductsRouter);
 app.use(productsRouter);
+app.use(cartsRouter);
 
 //method) Application.listen(port: number, hostname: string, backlog: number, callback?: (...args: any[]) => void): Server (+5 overloads)
 app.listen(3000, () => {
