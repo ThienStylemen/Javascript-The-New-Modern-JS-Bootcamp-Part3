@@ -3,7 +3,7 @@ const layout = require('../layout');
 module.exports = ({items})=>{
     const renderedItems = items.map((eachItem) =>{
         return `
-            <div> ${eachItem.product.title} - ${eachItem.product.price} </div>
+            <div> ${eachItem.product.title} - ${eachItem.product.price}- ${eachItem.quantity} </div>
         `;
     }).join('');
     return layout({
