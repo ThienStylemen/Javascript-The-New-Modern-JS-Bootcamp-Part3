@@ -23,7 +23,7 @@ router.post('/cart/products', async (req,res)=>{
     
     await cartsRepo.update(cart.id, {items: cart.items});   //async update(id, attrs)
     
-    res.send('Product Added to cart');
+    res.redirect('/cart');
 });
 
 // Receive a GEt request to show all items in cart
@@ -39,7 +39,13 @@ router.get('/cart', async (req,res)=>{
 });
 //Receive a post request to delete an item from a cart
 router.post('/cart/products/delete', async (req,res)=>{
-    console.log(req.body.itemId);
+    const cart = await cartsRepo.getOne(req.session.cartId);
+    const {itemId} = req.body;   //value="${item.id}" name="itemId"
+    const items = cart.items.filter(eachItem => eachItem.id !== itemId);
+    await cartsRepo.update(req.session.cartId, {items}); // items: items
+    res.redirect('/cart');
+
+
 });
 
 
